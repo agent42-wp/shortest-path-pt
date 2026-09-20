@@ -156,6 +156,25 @@ def _result(distance, parent, source, target):
     return INF, []
 
 
+def path_edges(graph: CSRGraph, path: List[int]):
+    """Return each path edge and weight, plus the summed weight."""
+    edges = []
+    total = 0
+    for u, v in zip(path, path[1:]):
+        col, weights = graph.neighbors(u)
+        weight = None
+        for child, edge_weight in zip(col, weights):
+            if int(child) == v:
+                candidate = int(edge_weight)
+                if weight is None or candidate < weight:
+                    weight = candidate
+        if weight is None:
+            raise ValueError(f"Path edge {u} -> {v} is missing from CSR")
+        edges.append((u, v, weight))
+        total += weight
+    return edges, total
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--graph", required=True, help="CSR prefix created by preprocess_csr.py")
@@ -164,6 +183,7 @@ def main() -> None:
     parser.add_argument("--target", type=int, required=True)
     parser.add_argument("--delta", type=int, default=100)
     parser.add_argument("--print-path", action="store_true")
+    parser.add_argument("--print-edges", action="store_true")
     args = parser.parse_args()
     graph = CSRGraph(args.graph)
     if not 1 <= args.source <= graph.nodes or not 1 <= args.target <= graph.nodes:
@@ -182,6 +202,11 @@ def main() -> None:
     print(f"path_nodes={len(path)} elapsed_seconds={elapsed:.6f}")
     if path and args.print_path:
         print(f"path={' '.join(map(str, path))}")
+    if path and args.print_edges:
+        edges, total = path_edges(graph, path)
+        for u, v, weight in edges:
+            print(f"edge={u}->{v} weight={weight}")
+        print(f"path_weight_sum={total}")
 
 
 if __name__ == "__main__":
