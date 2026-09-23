@@ -85,3 +85,7 @@ Thứ tự nên thử trên RAM 16 GB: `NY -> NW -> COL -> CTR -> USA`. Với CT
 ## Ý nghĩa đầu ra
 
 `nodes` là số đỉnh; `arcs` là số cung; `distance` là tổng trọng số ngắn nhất; `path_nodes` là số node trong đường đi; `elapsed_seconds` là thời gian truy vấn, không gồm tiền xử lý; `path_weight_sum` là tổng khi dùng `--print-edges`.
+
+
+#test bellman 
+python3 distributed_bellman_ford.py   data/USA-road-t.NY.gr.gz   --source 1   --target 1000   --workers 2  
